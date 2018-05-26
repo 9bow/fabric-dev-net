@@ -1,0 +1,70 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+---
+Profiles:
+    MyCompanyOrdererGenesis:
+        # Capabilities:
+        #     <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            # Capabilities:
+            #     <<: *OrdererCapabilities
+        Consortiums:
+            MyConsortium:
+                Organizations:
+                    - *MyOrg
+    MyOrgChannel:
+        Consortium: MyConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *MyOrg
+            # Capabilities:
+            #     <<: *ApplicationCapabilities
+
+
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/mycompany.com/msp
+    - &MyOrg
+        Name: MyOrgMSP
+        ID: MyOrgMSP
+        MSPDir: crypto-config/peerOrganizations/myorg.mycompany.com/msp
+        AnchorPeers:
+            - Host: peer0.myorg.mycompany.com
+              Port: 7051
+
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.mycompany.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+    Organizations:
+
+
+Application: &ApplicationDefaults
+    Organizations:
+
+
+# Capabilities:
+#     Global: &ChannelCapabilities
+#         V1_1: true
+#     Orderer: &OrdererCapabilities
+#         V1_1: true
+#     Application: &ApplicationCapabilities
+#         V1_1: true
